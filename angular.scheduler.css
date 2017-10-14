@@ -1,0 +1,227 @@
+.scheduler .strike{
+	text-decoration:underline;
+}
+
+.scheduler table[role='title'] .scheduler{}
+.scheduler *{
+	/*font-weight:normal;*/
+	    box-sizing: border-box;
+}
+.scheduler table[role='title']{
+    width: 100%;
+    position: relative;
+    background: #EDEDED;
+    border-bottom: 1px solid #D9DEE4;
+    /*height: 57px;*/
+    transition: 0.3s linear all;
+}
+.scheduler table[role='title'] td{
+	vertical-align:middle;
+	line-height:100%;
+}
+.scheduler table[role='title'] h1{
+	
+}
+.scheduler div[role='title'] > *{
+	display:inline-block;
+}
+
+
+.scheduler table[role='heading']{
+	border-collapse: collapse;
+	table-layout:fixed;
+	width:100%;
+}
+.scheduler table[role='heading'] td, .scheduler table[role='heading'] th{
+	box-shadow: 0px 1px 0px lightgray;
+	padding: 7px 0px;
+	box-sizing: border-box;
+	cursor: default;
+}
+.scheduler table[role='heading'] th:first-child {
+    width: 73px;
+}
+
+
+.scheduler div[role='content']{
+    width: 100%;
+    overflow: auto;
+}
+.scheduler div[role='content'] table{
+	border-collapse: collapse;
+	table-layout:fixed;
+	width:100%;
+}
+.scheduler div[role='content'] table td, .scheduler div[role='content'] table th{
+	border-bottom: 1px solid lightgray;
+    padding: 3px;
+    box-sizing: border-box;
+    cursor: default;
+    vertical-align: top;
+	position: relative;
+}
+.scheduler div[role='content'] table th:first-child {
+    width: 73px;
+    padding: 7px 0px;
+}
+
+
+.scheduler div[role='content'] table[role='monthly'] td, .scheduler div[role='content'] table th[role='monthly'] {
+    border: 1px solid #ddd;
+}
+.scheduler div[role='content'] table[role='monthly'] td:after{
+    content: attr(data-day);
+    position: absolute;
+    top: 7px;
+    right: 7px;
+}
+.scheduler div[role='content'] table td.disabled{
+	opacity:0.3;
+}
+
+.scheduler div[role='background']{
+    background: rgba(0, 0, 0, 0.7);
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 2;
+    width: 100%;
+    height: 100%;
+}
+.scheduler div[role='foreground']{
+    height: auto;
+    width: 600px;
+    background: white;
+    box-sizing: border-box;
+    transition: 0.3s ease-in-out all;
+    position: fixed;
+    z-index: 1;
+    margin: 123px calc(50% - 200px);
+}
+.scheduler div[role='background'] table{
+	width:100%;
+	table-layout: fixed;
+	border-collapse:collapse;
+	margin-top: 13px;
+}
+.scheduler div[role='background'] table td{
+	padding:7px 13px;
+}
+.scheduler div[role='background'] h2{
+	font-size: 21.034px;
+	width: 100%;
+	position: relative;
+	background: #EDEDED;
+	border-bottom: 1px solid #D9DEE4;
+	padding: 5px 13px;
+}
+.scheduler div[role='background'] select{
+	float: right;
+    color: inherit;
+    cursor: pointer;
+    outline: none;
+    font-size: inherit;
+}
+.scheduler div[role='footer'] {
+    padding: 13px;
+    border-top: 1px solid #ccc;
+    display: inline-block;
+    width: 100%;
+}
+.scheduler div[role='footer'] a{
+    float: right;
+    margin: 0px 13px;
+    display: inline-block;
+}
+
+.scheduler table[role='weekly'] div[role='event']{
+    position: absolute;
+    left: 5px;
+    width: calc(100% - 10px);
+    box-shadow: 2px 3px 5px rgba(0, 0, 0, 0.23);
+    z-index: 1;
+    padding: 3px;
+    box-sizing: border-box;
+	border: 1px solid;
+	background:rgba(255, 255, 255, 0.5);
+}
+.scheduler table[role='monthly'] div[role='event'], .scheduler table[role='weekly'] tr:first-child div[role='event'], .scheduler div[role='event']{
+    width: 100%;
+    box-shadow: 2px 3px 5px rgba(0, 0, 0, 0.23);
+    z-index: 1;
+    padding: 3px;
+    box-sizing: border-box;
+    margin-bottom: 3px;
+    border: 1px solid;
+    font-size: 10px;
+    padding-right: 11px;
+    height: auto;
+    left: 0px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+	background:rgba(255, 255, 255, 0.5);
+	position:relative;
+}
+.scheduler table[role='monthly'] div[role='event']:first-child{
+	margin-top:23px;
+}
+.scheduler div[role='event'] a[role='del']{
+    position: absolute;
+    top: 2px;
+    right: 3px
+}
+
+.scheduler .md-checkbox{
+    position: relative;
+    width: auto;
+    display: inline-block;
+    cursor: pointer;
+    font-family: Roboto;
+    line-height: 1.17;
+    color: inherit;
+}
+.scheduler .md-checkbox input{
+	display:none;
+}
+.scheduler .md-checkbox input[type='checkbox']+label{
+    width: 19px;
+    height: 19px;
+    display: block;
+    float: left;
+	pointer-events:none;
+}
+.scheduler .md-checkbox input[type='checkbox']+label:before{
+	content: '';
+    position: relative;
+    top: 0px;
+    left: 0px;
+    width: 13px;
+    height: 13px;
+    z-index: 0;
+    border: 1px solid #5a5a5a;
+    border-radius: 1px;
+    margin-top: 2px;
+    transition: .2s;
+    display: block;
+}
+.scheduler .md-checkbox input[type='checkbox']:checked+label:before {
+    top: -2px;
+    left: -3px;
+    width: 7px;
+    height: 16px;
+    border-top: 1px solid transparent;
+    border-left: 1px solid transparent;
+    border-right: 1px solid;
+    border-bottom: 1px solid;
+    -webkit-transform: rotate(40deg);
+    transform: rotate(40deg);
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    -webkit-transform-origin: 100% 100%;
+    transform-origin: 100% 100%;
+}
+.scheduler .md-checkbox *{
+	pointer-events:none;
+}
+.scheduler .md-checkbox input[type='checkbox']+label+label{ margin-left:5px; }

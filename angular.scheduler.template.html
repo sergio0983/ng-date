@@ -1,0 +1,199 @@
+<div ng-style = 'SchedulerCtrl.style' style='box-sizing: border-box;'>
+	<ng-transclude></ng-transclude><!--La transclusión permite añadir eventos como nodos html, no es práctico, pero la sintaxis es extremadamente legible-->
+	
+	<!--EDITOR-->
+	<div role = 'background' ng-if = 'SchedulerCtrl.editMode'>
+		<div role = 'foreground'>
+			<h2 ng-style = '{fontSize:SchedulerCtrl.size*1.618+"px"}'>Añadir Horario</h2>
+
+			<table>	
+				<tr>
+					<td colspan = '3'>
+						<b>Repetición</b>
+						<select ng-model = 'SchedulerCtrl.EventCreator.schedule'>
+							<option value = 'weekly'>Semanal</option>
+							<option value = 'oddly'>Semanas pares</option>
+							<option value = 'evenly'>Semanas impares</option>
+							<!--
+							<option value = 'initially'>Semanal</option>
+							<option value = 'finally'>Semanal</option>
+							-->
+							<option value = 'monthly'>Mensual</option>
+							<option value = 'quarterly'>Trimestral</option>
+						</select>
+					</td>
+					<td colspan = '4'></td>
+				</tr>
+
+				<tr> 
+					<td colspan='7'>
+						<div class = 'ac-input' type = 'checkbox'  ng-model = 'SchedulerCtrl.EventCreator.allDays'>Todos los días</div>
+					</td>
+				</tr> 
+				<tr>
+					<td colspan='7'>
+						<div class = 'ac-input' type = 'checkbox'  ng-model = 'SchedulerCtrl.EventCreator.laborableDays'>Días laborables</div>
+					</td>
+				</tr>
+				<tr>  
+					<td ng-repeat = 'day in SchedulerCtrl.weekdays track by $index'>
+						<div class = 'ac-input' type = 'checkbox' ng-model = 'SchedulerCtrl.EventCreator.weekdays[$index]'>{{day | date:"EEE"}}</div>
+					</td> 
+				</tr>
+				
+				<tr>  
+					<td colspan='7'>
+						<div class = 'ac-input' type = 'checkbox' ng-model = 'SchedulerCtrl.EventCreator.allDay'>Todo el día</div>
+					</td> 
+				</tr>
+				
+				<tr ng-if = '!SchedulerCtrl.EventCreator.allDay'>
+					<td colspan='3'>
+						<b>Hora Inicio</b>
+						<select ng-options = 'i as pad(i, 2) for i in [] | range:0:59' ng-model = 'SchedulerCtrl.EventCreator.startTime.minute'></select>
+						<select ng-options = 'i as pad(i, 2) for i in [] | range:0:23' ng-model = 'SchedulerCtrl.EventCreator.startTime.hour'></select>
+					</td>
+					<td colspan = '4'></td>
+				</tr>
+				<tr ng-if = '!SchedulerCtrl.EventCreator.allDay'> 
+					<td colspan = '3'>
+						<b>Hora Fin</b>
+						<select ng-options = 'i as pad(i, 2) for i in [] | range:0:59' ng-model = 'SchedulerCtrl.EventCreator.endTime.minute'></select>
+						<select ng-options = 'i as pad(i, 2) for i in [] | range:0:23' ng-model = 'SchedulerCtrl.EventCreator.endTime.hour'></select>
+					</td>
+					<td colspan = '4'></td>
+				</tr>	
+			</table>
+			<div role = 'footer'>
+				<a ng-click = 'SchedulerCtrl.createEvent()'>ok</a>
+				<a ng-click = 'SchedulerCtrl.editMode = false'>cancelar</a>
+			</div>
+		</div>
+	</div>
+	
+	<!--VISOR EVENTOS DE UN DÍA CONCRETO (VER MÁS...)-->
+	<div role = 'background' ng-if = 'SchedulerCtrl.selectedDay'>
+		<div role = 'foreground'>
+			<h2 ng-style = '{fontSize:SchedulerCtrl.size*1.618+"px"}'>{{SchedulerCtrl.selectedDay | date:"EEEE, dd MMM yyyy"}}</h2>
+			
+			<div style = 'max-height: 400px; overflow: auto; padding: 7px;'>
+				<div ng-click = 'SchedulerCtrl.click({ev: event})' role = 'event' ng-repeat = 'event in SchedulerCtrl.selectedEvents track by $index' ng-style = 'SchedulerCtrl.getStyle(event)'>
+					<a ng-if = 'SchedulerCtrl.editable' role='del' ng-click = 'SchedulerCtrl.delete(event)'>&times </a>
+					{{event.name}}
+				</div>
+			</div>
+
+			<div role = 'footer'>
+				<a ng-click = 'SchedulerCtrl.selectedDay = undefined'>ok</a>
+			</div>
+		</div>
+	</div>
+
+	<!--BARRA HERRAMIENTAS DE ARRIBA-->
+	<table role = 'title' ng-style = '{height:SchedulerCtrl.size*1.618*1.618+"px"}'>
+		<td ng-style = '{padding:"0px "+SchedulerCtrl.size+"px", width:SchedulerCtrl.size*5+"px"}'>
+			<a ng-click = 'SchedulerCtrl.today()'>HOY</a>
+		</td> 
+		<td ng-style = '{textAlign:"center", width:SchedulerCtrl.size+"px"}'>
+			<a ng-style = '{fontSize:SchedulerCtrl.size+"px"}' ng-click = 'SchedulerCtrl.prev()'> &#9664; </a>
+		</td> 
+		<td ng-style = '{textAlign:"center", width:SchedulerCtrl.size+"px"}'>
+			<a ng-style = '{fontSize:SchedulerCtrl.size+"px"}' ng-click = 'SchedulerCtrl.next()'> &#9654; </a>
+		</td> 
+		<td ng-style = '{padding:"0px "+SchedulerCtrl.size+"px", width:SchedulerCtrl.size+"px", whiteSpace:"nowrap"}'>
+			<h1 ng-style = '{fontSize:SchedulerCtrl.size+"px", textAlign:"center"}'> {{SchedulerCtrl.from | date:'dd MMM yyyy'}} / {{SchedulerCtrl.to | date:'dd MMM yyyy'}} </h1>
+		</td>
+		<td></td>
+		<td ng-style = '{padding:"0px "+SchedulerCtrl.size+"px", width:SchedulerCtrl.size+"px", whiteSpace:"nowrap"}'>
+			<a ng-class = '{strike:SchedulerCtrl.schedule == "monthly"}' ng-click='SchedulerCtrl.schedule = "monthly"'>Mes</a>
+		</td>
+		<td ng-style = '{padding:"0px "+SchedulerCtrl.size+"px", width:SchedulerCtrl.size+"px", whiteSpace:"nowrap"}'>
+			<a ng-class = '{strike:SchedulerCtrl.schedule == "weekly"}' ng-click='SchedulerCtrl.schedule = "weekly"'>Semana</a>
+		</td>
+		<td ng-style = '{padding:"0px "+SchedulerCtrl.size+"px", width:SchedulerCtrl.size+"px", whiteSpace:"nowrap"}'>
+			<a ng-class = '{strike:SchedulerCtrl.schedule == "daily"}' ng-click='SchedulerCtrl.schedule = "daily"'>Día</a>
+		</td>
+	</table>
+		
+	<!--CABECERA CON NOMBRES DE LOS DÍAS DE LA SEMANA-->
+	<table  role = 'heading' ng-style = '{height:SchedulerCtrl.size*1.618*1.618+"px"}' ng-if = 'SchedulerCtrl.schedule != "daily"'>
+		<tr>
+			<th></th>
+			<th ng-repeat = 'day in SchedulerCtrl.weekdays'>{{ day | date:'EEEE'}}</th>
+		</tr>
+	</table>
+	
+	<!--CABECERA CON NOMBRES DEL DÍA CUANDO SÓLO SE VE UN DÍA-->
+	<table  role = 'heading' ng-style = '{height:SchedulerCtrl.size*1.618*1.618+"px"}' ng-if = 'SchedulerCtrl.schedule == "daily"'>
+		<tr>
+			<th></th>
+			<th>{{ SchedulerCtrl.from | date:'EEEE'}}</th>
+		</tr>
+	</table>
+	
+	<!--PARTE DEL CONTENIDO-->
+	<div role = 'content' ng-style = '{height:"calc(100% - "+(SchedulerCtrl.size*1.618*1.618+SchedulerCtrl.size*1.618*1.618)+"px"}'>
+		<!--DÍA-->
+		<table ng-if = 'SchedulerCtrl.schedule == "daily"' role = 'daily'>
+			<tr>
+				<th>TODO EL DÍA</th>
+				<td ng-click='SchedulerCtrl.editable && SchedulerCtrl.openEditor(SchedulerCtrl.from)'>
+					<div ng-click = 'SchedulerCtrl.click({ev: event})' role = 'event' ng-repeat = 'event in SchedulerCtrl.map[24] | limitTo:3 track by $index' ng-style = 'SchedulerCtrl.getStyle(event)' title = '{{event.name}}'>
+						<a ng-if = 'SchedulerCtrl.editable' role='del' ng-click = 'SchedulerCtrl.delete(event)'>&times </a>
+						{{event.name}}
+					</div>
+					<a ng-if = 'SchedulerCtrl.map[24].length > 3' ng-click = 'SchedulerCtrl.viewMore(SchedulerCtrl.from)'>+ {{SchedulerCtrl.map[24].length}} más</a>
+				</td>
+			</tr>
+			<tr ng-repeat = 'hour in SchedulerCtrl.hours'>
+				<th>{{pad(hour, 2)}}:00</th>
+				<td ng-click='SchedulerCtrl.editable && SchedulerCtrl.openEditor(SchedulerCtrl.from, hour)'>
+					<div ng-click = 'SchedulerCtrl.click({ev: event})' role = 'event' ng-repeat = 'event in SchedulerCtrl.getEvents(SchedulerCtrl.from, hour) track by $index' ng-style = 'SchedulerCtrl.getStyle(event)'>
+						<a ng-if = 'SchedulerCtrl.editable' role='del' ng-click = 'SchedulerCtrl.delete(event)'>&times </a>
+						{{event.name}}
+					</div>	
+				</td>
+			</tr>
+		</table>
+
+		<!--SEMANA-->
+		<table ng-if = 'SchedulerCtrl.schedule == "weekly"' role = 'weekly'>
+			<tr>
+				<th>TODO EL DÍA</th>
+				<td ng-repeat = 'day in SchedulerCtrl.weekdays track by $index' ng-click='SchedulerCtrl.editable && SchedulerCtrl.openEditor(day)'>
+					<div ng-click = 'SchedulerCtrl.click({ev: event})' role = 'event' ng-repeat = 'event in SchedulerCtrl.map[$index][24] | limitTo:3 track by $index' ng-style = 'SchedulerCtrl.getStyle(event)' title = '{{event.name}}'>
+						<a ng-if = 'SchedulerCtrl.editable' role='del' ng-click = 'SchedulerCtrl.delete(event)'>&times </a>
+						{{event.name}}
+					</div>
+					<a ng-if = 'SchedulerCtrl.map[$index][24].length > 3' ng-click = 'SchedulerCtrl.viewMore(day)'>+ {{SchedulerCtrl.map[$parent.$index][24].length}} más</a>
+				</td>
+			</tr>
+		
+		
+			<tr ng-repeat = 'hour in SchedulerCtrl.hours'>
+				<th>{{pad(hour, 2)}}:00</th>
+				<td ng-repeat = 'day in SchedulerCtrl.weekdays' ng-click='SchedulerCtrl.editable && SchedulerCtrl.openEditor(day, hour)'>
+					<div ng-click = 'SchedulerCtrl.click({ev: event})' role = 'event' ng-repeat = 'event in SchedulerCtrl.getEvents(day, hour) track by $index' ng-style = 'SchedulerCtrl.getStyle(event)'>
+						<a ng-if = 'SchedulerCtrl.editable' role='del' ng-click = 'SchedulerCtrl.delete(event)'>&times </a>
+						{{event.name}}
+					</div>	
+				</td>
+			</tr>
+		</table>
+		
+		<!--MES-->
+		<table ng-if = 'SchedulerCtrl.schedule == "monthly"' role = 'monthly'>
+			<tr ng-repeat = 'week in SchedulerCtrl.weeks track by $index'>
+				<th>{{week.firstDay | date: 'dd MMM'}}<br>{{week.lastDay | date: 'dd MMM'}}</th>
+				<td ng-repeat = 'day in week.weekdays track by $index' ng-click='SchedulerCtrl.editable && SchedulerCtrl.openEditor(day)' data-day = '{{day | date:"d"}}' ng-class = '{disabled: day.getMonth() != SchedulerCtrl.from.getMonth() }'>
+					<div ng-click = 'SchedulerCtrl.click({ev: event})' role = 'event' ng-repeat = 'event in SchedulerCtrl.map[$parent.$index][$index] | limitTo:3 track by $index' ng-style = 'SchedulerCtrl.getStyle(event)'>
+						<a ng-if = 'SchedulerCtrl.editable' role='del' ng-click = 'SchedulerCtrl.delete(event)'>&times </a>
+						{{event.name}}
+					</div>
+
+					<a ng-if = 'SchedulerCtrl.map[$parent.$index][$index].length > 3' ng-click = 'SchedulerCtrl.viewMore(day)'>+ {{SchedulerCtrl.map[$parent.$parent.$index][$parent.$index].length}} más</a>
+				</td>
+			</tr>
+		</table>	
+	</div>
+</div>
