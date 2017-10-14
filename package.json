@@ -1,4 +1,8 @@
 {
-   "name": "ng-date",
-   "version": "0.1.0"
+	"name": "ng-date",
+	"version": "0.1.0",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/sergio0983/ng-date.git"
+	}
 }
